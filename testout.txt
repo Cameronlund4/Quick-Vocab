@@ -1,4 +1,4 @@
-Potato
+Potato: This is a defintion for the term "Potato"
 	Fries
 	Spud
 	Tomato

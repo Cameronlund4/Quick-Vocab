@@ -1,7 +1,14 @@
+# Dependents:
+#  - Must be run with python3 for enums
+#  - Needs python-docx to build the word files
+
 from enum import Enum
 import math
 import yaml
 from term import Term
+from term import Tag
+from docx import Document
+from docx.shared import Inches
 
 headerEndChar = '<'
 spaceToTab = 2
@@ -67,7 +74,7 @@ def clearIndentsUnder(indents, indentNum):
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 
-lastIndentCount = 0
+lastIndentNum = 0
 print("Parsing file--------------------------------------")
 with doc as inputFile:
     for line in inputFile:  # Iterate each line in the file
@@ -83,28 +90,29 @@ with doc as inputFile:
             # Replace any harmful characters
             safeLine = line.replace('\n', ' ').replace('\r', '')
             # Get how indented this line is
-            indentCount = int(math.floor(getIndent(safeLine)))
+            indentNum = int(math.floor(getIndent(safeLine)))
             # Now that we know indent, get rid of trails
             safeLine = safeLine.strip()
             print("--> Term: \"" + safeLine + "\"")
             # Check for any special case tags
-            if safeLine.startswith("i:"): # Ignored line
+            if safeLine.startswith("i:"):  # Ignored line
                 continue
             # Create indent obj
-            indent = Term(indentCount, safeLine, indentData[indentCount], {})
-            print("----> Indent: " + str(indentCount))
-            superIndent = lastIndent[indentCount -
-                                     1] if (indentCount > 0) else None
+            indent = Term(indentNum, safeLine, indentData[indentNum], {
+            } if (indentNum == 0) else {Tag.define: False})
+            print("----> Indent: " + str(indentNum))
+            superIndent = lastIndent[indentNum -
+                                     1] if (indentNum > 0) else None
             if not (superIndent == None):
-                print("----> Super term: "+superIndent.getTerm())
+                print("----> Super term: " + superIndent.getTerm())
             # Write the line
             outputFile.write(indent.getLine())
             # Save this indent so children can use it later
-            lastIndent[indentCount] = indent
+            lastIndent[indentNum] = indent
             print("---------")
             # Manage clearing no longer relevant last indents
-            if (indentCount < lastIndentCount):  # If we have moved smaller
-                clearIndentsUnder(lastIndent, indentCount)  # Clear bigger
-            lastIndentCount = indentCount  # Save this indent as the last
+            if (indentNum < lastIndentNum):  # If we have moved smaller
+                clearIndentsUnder(lastIndent, indentNum)  # Clear bigger
+            lastIndentNum = indentNum  # Save this indent as the last
 outputFile.close()
 doc.close()

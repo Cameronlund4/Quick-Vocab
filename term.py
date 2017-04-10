@@ -1,10 +1,4 @@
-# Dependents:
-#  - Must be run with python3 for enums
-#  - Needs python-docx to build the word files
-
 from enum import Enum
-from docx import Document
-from docx.shared import Inches
 
 class Tag(Enum):
     synonym = 1
@@ -19,14 +13,15 @@ class Term:
     indentNum = None  # Store the indent num of his
     term = None  # Store the term this object represents
     definition = None  # Store the definition for this term
-    tags = dict()
-
+    tags = {Tag.define: True}
 
     def __init__(self, indentNum, term, indentData, tags):
         self.indentNum = indentNum
         self.indentName = "indent" + str(indentNum)
         self.term = term
         self.tags.update(tags)
+        if (self.tags.get(Tag.define)):
+            self.define()
         print(self.getLine()[:-1])
 
     def getTerm(self):
@@ -36,11 +31,14 @@ class Term:
         return self.definition
 
     def hasDef(self):
-        return self.defintion != None
+        return self.definition != None
 
     def define(self):
         # TODO define the term
-        return "This is a defintion for the term \"" + self.term + "\""
+        self.definition = "This is a defintion for the term \"" + self.term + "\""
 
     def getLine(self):
-        return ("\t" * self.indentNum) + self.term +"\n"
+        if (self.hasDef()):
+            return ("\t" * self.indentNum) + self.term + ": " + self.getDef() + "\n"
+        else:
+            return ("\t" * self.indentNum) + self.term + "\n"
