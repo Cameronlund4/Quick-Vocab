@@ -61,7 +61,7 @@ antcolor: red # Tells QuickVoc that antonyms should be colored red when displaye
 
 The body is formatted based on the indents you define in the YAML header. Two spaces or a tab both count as a single indent. When a indent references another indent (For example, if `indent1` is using `indent0` in a quizlet), it will reference the most recent use of that indent above. For that reason, an `indent1` should always be below an `indent0` at some point. Here is an example:
 
-```
+```yaml
 Potato # This is an `indent0`
   Spud # This is an `indent1`, synynom to `indent0`
   Fries # This is an `indent1`, synynom to `indent0`
