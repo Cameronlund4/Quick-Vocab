@@ -9,14 +9,15 @@ Quick Vocab, or QuickVoc, is a program designed to do the busywork of vocabulary
 
 ### How it works:
 
-QuickVoc will take a text file in that is seperated into two parts: the [header](LICENSE.txt) and the [body](LICENSE.txt). The header tells the program what it needs to be doing and the body is where you write out the terms you want the program to handle. The format of the document is made to be extremely easy to type out, saving you as much time as possible. Here is how the program structure looks:
+QuickVoc will take a text file in that is seperated into two parts: the [header](https://github.com/Cameronlund4/Quick-Vocab/blob/master/README.md#yaml-header) and the [body](https://github.com/Cameronlund4/Quick-Vocab/blob/master/README.md#term-body). These are seperated by a `<` so the program knows where header stops and the body starts. The header tells the program what it needs to be doing and the body is where you write out the terms you want the program to handle. The format of the document is made to be extremely easy to type out, saving you as much time as possible. Here is how the program structure looks:
 
 ```
 #
 # This is where the YAML header goes
 #
 
-# This carrot tells the program that the header is done and that the following text is a part of the body
+# This carrot tells the program that the header is done
+# and that the following text is a part of the body
 <
 
 #
@@ -39,9 +40,9 @@ indent0: # Defining how to handle lines with no indent
 
 ### Term body:
 
-The body is formatted based on the indents you define in the YAML header.
+The body is formatted based on the indents you define in the YAML header. 
 
 -------------------------------------------------------------
 
 ### Disclaimer:
-This tool is created with the intent of making studying vocabulary easier, **_NOT_** to cheat on homework or any sort of assignment. You are responsible for how you use this tool, and any trouble to get into by using it. Please see [our license.](LICENSE.txt)
+This tool is created with the intent of making studying vocabulary easier, **_NOT_** to cheat on homework or any sort of assignment. You are responsible for how you use this tool and any trouble you get into by using it. Please see [our license.](LICENSE.txt)
