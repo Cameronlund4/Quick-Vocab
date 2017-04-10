@@ -8,6 +8,7 @@ spaceToTab = 2
 headerDone = False
 yamlText = ""
 doc = open('/home/camer/Desktop/quick_vocab/testdoc.txt', 'r')
+outputFile = open('/home/camer/Desktop/quick_vocab/testout.txt', 'w')
 indentData = dict()
 lastIndent = []
 quizlets = dict()  # Create a dictionary to store quizlet terms
@@ -86,13 +87,18 @@ with doc as inputFile:
             # Now that we know indent, get rid of trails
             safeLine = safeLine.strip()
             print("--> Term: \"" + safeLine + "\"")
+            # Check for any special case tags
+            if safeLine.startswith("i:"): # Ignored line
+                continue
             # Create indent obj
-            indent = Term(indentCount, safeLine, indentData[indentCount])
+            indent = Term(indentCount, safeLine, indentData[indentCount], {})
             print("----> Indent: " + str(indentCount))
             superIndent = lastIndent[indentCount -
                                      1] if (indentCount > 0) else None
             if not (superIndent == None):
                 print("----> Super term: "+superIndent.getTerm())
+            # Write the line
+            outputFile.write(indent.getLine())
             # Save this indent so children can use it later
             lastIndent[indentCount] = indent
             print("---------")
@@ -100,4 +106,5 @@ with doc as inputFile:
             if (indentCount < lastIndentCount):  # If we have moved smaller
                 clearIndentsUnder(lastIndent, indentCount)  # Clear bigger
             lastIndentCount = indentCount  # Save this indent as the last
+outputFile.close()
 doc.close()
