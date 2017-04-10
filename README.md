@@ -32,17 +32,51 @@ QuickVoc will take a text file in that is seperated into two parts: the [header]
 QuickVoc uses a block of YAML at the beginning of the text file which tells it what it needs to be doing. This contains arguments like how to show the difference between synonyms and antonyms as well as defining what each different indent means.
 
 ```yaml
-indent0: # Defining how to handle lines with no indent
-  define: true # Telling QuickVoc that this line should be defined
+indent0: # Defining how to handle terms with no indent
+  define: true # Telling QuickVoc that this term should be defined
+  quizlets: # Telling QuickVoc to generate quizlets with this term
+    Base Definitions: # Telling QuickVoc to create a set named 'Base Definitions'
+      use: indent0|indent0_def # Tells QuickVoc to use the word as the term and the def as the def
+
+indent1: # Defining how to handle terms with 1 tab or 2 spaces infront
+  define: true # Telling QuickVoc that this term should be defined
+  type: syn|ant # Tells QuickVoc that these terms are synonyms/antonyms of the above indent0 term
+  quizlets: # Telling QuickVoc to generate quizlets with this term
+    Synonyms: # Telling QuickVoc to create a set named 'Synonyms'
+      use: indent1|indent0 # Tells QuickVoc to use indent1 as the term and above indent0 as the def
+      only: syn # Tells QuickVoc to only use this quizlet format for words that are syn of indent0
+    Antonyms: # Telling QuickVoc to create a set named 'Antonyms'
+      use: indent1|indent0 # Tells QuickVoc to use indent1 as the term and above indent0 as the def
+      only: syn # Tells QuickVoc to only use this quizlet format for words that are ant of indent0
+    Base Definitions: # Yep, two indents can add terms to the same quizlet! (see indent0)
+      use: indent1|indent1_def # Tells QuickVoc to use the word as the term and the def as the def
+      
+syncolor: green # Tells QuickVoc that synonyms should be colored green when displayed
+antcolor: red # Tells QuickVoc that antonyms should be colored red when displayed
 ```
 
 -------------------------------------------------------------
 
 ### Term body:
 
-The body is formatted based on the indents you define in the YAML header. 
+The body is formatted based on the indents you define in the YAML header. Two spaces or a tab both count as a single indent. When a indent references another indent (For example, if `indent1` is using `indent0` in a quizlet), it will reference the most recent use of that indent above. For that reason, an `indent1` should always be below an `indent0` at some point. Here is an example:
+
+```
+Potato # This is an `indent0`
+  Spud # This is an `indent1`, synynom to `indent0`
+  Fries # This is an `indent1`, synynom to `indent0`
+  Tomato # This is an `indent1`, antonym to `indent0`
+    Something else # This is an `indent2`
+```
+(Note, `# Comments` don't currently work in the term body)
+
+-------------------------------------------------------------
+
+### How to Install:
+
+Idk yet, give me some time :)
 
 -------------------------------------------------------------
 
 ### Disclaimer:
-This tool is created with the intent of making studying vocabulary easier, **_NOT_** to cheat on homework or any sort of assignment. You are responsible for how you use this tool and any trouble you get into by using it. Please see [our license.](LICENSE.txt)
+This tool is created with the intent of making studying vocabulary easier, **_NOT_** to cheat on homework or any sort of assignment. You are responsible for how you use this tool and any trouble you get into by using it. Please read [our license](LICENSE.txt) before using this program.
