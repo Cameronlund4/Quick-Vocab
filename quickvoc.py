@@ -17,7 +17,7 @@ yamlText = ""
 doc = open('/home/camer/Desktop/quick_vocab/testdoc.txt', 'r')
 outputFile = open('/home/camer/Desktop/quick_vocab/testout.txt', 'w')
 indentData = dict()
-lastIndent = []
+lastTerms = []
 quizlets = dict()  # Create a dictionary to store quizlet terms
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
@@ -64,6 +64,43 @@ def processYAML(yamlText):
         print("----> " + str(argData))
     return [None] * indentLen  # Create a list to store indents and return
 
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
+
+
+def processBody(line):
+    global lastIndentNum, lastTerms, quizlets
+    # Replace any harmful characters
+    safeLine = line.replace('\n', ' ').replace('\r', '')
+    # Get how indented this line is
+    indentNum = int(math.floor(getIndent(safeLine)))
+    # Now that we know indent, get rid of trails
+    safeLine = safeLine.strip()
+    print("--> Term: \"" + safeLine + "\"")
+    # Check for any special case tags
+    if safeLine.startswith("i:"):  # Ignored line
+        return
+    # Create term obj
+    term = Term(indentNum, safeLine, indentData[indentNum], {
+    } if (indentNum == 0) else {Tag.define: False})
+    print(str({} if (indentNum == 0) else {Tag.define: False}))
+    print("----> Indent: " + str(indentNum))
+    superIndent = lastTerms[indentNum -
+                            1] if (indentNum > 0) else None
+    if not (superIndent == None):
+        print("----> Super term: " + superIndent.getTerm())
+    # Write the line
+    outputFile.write(term.getLine())
+    # Create any quizlets
+    term.createQuizlets(lastTerms, quizlets)
+    # Save this term so children can use it later
+    lastTerms[indentNum] = term
+    print("---------")
+    # Manage clearing no longer relevant last terms
+    if (indentNum < lastIndentNum):  # If we have moved smaller
+        clearIndentsUnder(lastTerms, indentNum)  # Clear bigger
+    lastIndentNum = indentNum  # Save this term as the last
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 
@@ -77,42 +114,19 @@ def clearIndentsUnder(indents, indentNum):
 lastIndentNum = 0
 print("Parsing file--------------------------------------")
 with doc as inputFile:
-    for line in inputFile:  # Iterate each line in the file
+    # Iterate each line in the file and process it
+    for line in inputFile:
         if (not headerDone):  # If we're still reading the header
             if (line.startswith(headerEndChar)):  # If reached header end
                 headerDone = True  # Stop processing as if reading header
-                lastIndent = processYAML(yamlText)  # Process out all the YAML
+                lastTerms = processYAML(yamlText)  # Process out all the YAML
                 # We're done processing YAML, tell user
                 print("> Parsing Body------------------------------------")
             else:  # If we haven't reached header end
                 yamlText += line  # Add the line to the YAML string
         else:  # No longer reading header, handle as a term
-            # Replace any harmful characters
-            safeLine = line.replace('\n', ' ').replace('\r', '')
-            # Get how indented this line is
-            indentNum = int(math.floor(getIndent(safeLine)))
-            # Now that we know indent, get rid of trails
-            safeLine = safeLine.strip()
-            print("--> Term: \"" + safeLine + "\"")
-            # Check for any special case tags
-            if safeLine.startswith("i:"):  # Ignored line
-                continue
-            # Create indent obj
-            indent = Term(indentNum, safeLine, indentData[indentNum], {
-            } if (indentNum == 0) else {Tag.define: False})
-            print("----> Indent: " + str(indentNum))
-            superIndent = lastIndent[indentNum -
-                                     1] if (indentNum > 0) else None
-            if not (superIndent == None):
-                print("----> Super term: " + superIndent.getTerm())
-            # Write the line
-            outputFile.write(indent.getLine())
-            # Save this indent so children can use it later
-            lastIndent[indentNum] = indent
-            print("---------")
-            # Manage clearing no longer relevant last indents
-            if (indentNum < lastIndentNum):  # If we have moved smaller
-                clearIndentsUnder(lastIndent, indentNum)  # Clear bigger
-            lastIndentNum = indentNum  # Save this indent as the last
+            processBody(line);
+    # Now that terms are processed and defined, make quizlets
+    # TODO Use the quizlets dict to generate quizlets
 outputFile.close()
 doc.close()

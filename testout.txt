@@ -1,9 +1,8 @@
 Potato: This is a defintion for the term "Potato"
-	Fries
 	Spud
 	Tomato
 	Fries
-Grape
+Grape: This is a defintion for the term "Grape"
 	Rasin
 	Date
 	Sunmaid

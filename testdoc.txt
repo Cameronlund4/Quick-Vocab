@@ -2,7 +2,7 @@ indent0:
   # Defaults to type “term,” which default defines
   quizlets:
     Vocab 11 [words]:
-      type: this|this_def
+      use: this|this_def
 indent1:
   type: syn|ant
   define: true
@@ -10,7 +10,7 @@ indent1:
   mark: color
   quizlets:
     Vocab 11 [Syn]:
-      type: indent0|this
+      use: indent0|this
       only: syn
     Vocab 11 [ant]:
       type: indent0|this
@@ -19,7 +19,6 @@ syncolor: green
 antcolor: red
 <
 Potato
-  Fries
   Spud
   Tomato
   Fries
