@@ -81,9 +81,7 @@ def processBody(line):
     if safeLine.startswith("i:"):  # Ignored line
         return
     # Create term obj
-    term = Term(indentNum, safeLine, indentData[indentNum], {
-    } if (indentNum == 0) else {Tag.define: False})
-    print(str({} if (indentNum == 0) else {Tag.define: False}))
+    term = Term(indentNum, safeLine, indentData[indentNum], {})
     print("----> Indent: " + str(indentNum))
     superIndent = lastTerms[indentNum -
                             1] if (indentNum > 0) else None

@@ -1,19 +1,18 @@
 indent0:
-  # Defaults to type “term,” which default defines
   quizlets:
     Vocab 11 [words]:
-      use: this|this_def
+      uses: this|this_def
 indent1:
   type: syn|ant
-  define: true
+  define: false
   # could be “color” red/green, “sign” +/-, “let” s/a
   mark: color
   quizlets:
     Vocab 11 [Syn]:
-      use: indent0|this
+      uses: this|indent0
       only: syn
     Vocab 11 [ant]:
-      type: indent0|this
+      uses: this|indent0
       only: ant
 syncolor: green
 antcolor: red
