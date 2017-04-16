@@ -31,6 +31,14 @@ def getIndent(message):
     else:
         return 0
 
+# TODO Make this check to make sure it's removing the actual prefix
+def removePreStrip(message, toRemove):
+    endMessage = message
+    endMessage = endMessage.strip() # Strip any spacing
+    endMessage = endMessage[len(toRemove):] # Strip prefix
+    endMessage = endMessage.strip() # Strip again incase space after prefix
+    return endMessage
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
 
@@ -78,10 +86,17 @@ def processBody(line):
     safeLine = safeLine.strip()
     print("--> Term: \"" + safeLine + "\"")
     # Check for any special case tags
+    arguments = dict()
     if safeLine.startswith("i:"):  # Ignored line
-        return
+        return # So do nothing with it
+    if safeLine.startswith("s:"): # Marked distinctly as synonym
+        safeLine = removePreStrip(safeLine, "s:")
+        arguments[Tag.synonym] = True;
+    if safeLine.startswith("a:"): # Marked distinctly as antonym
+        safeLine = removePreStrip(safeLine, "a:")
+        arguments[Tag.antonym] = True;
     # Create term obj
-    term = Term(indentNum, safeLine, indentData[indentNum], {})
+    term = Term(indentNum, safeLine, indentData[indentNum], arguments)
     print("----> Indent: " + str(indentNum))
     superIndent = lastTerms[indentNum -
                             1] if (indentNum > 0) else None
@@ -126,5 +141,12 @@ with doc as inputFile:
             processBody(line);
     # Now that terms are processed and defined, make quizlets
     # TODO Use the quizlets dict to generate quizlets
+print("> Quizlets Generated------------------------------")
+for quizlet in quizlets:
+    print("--> "+quizlet)
+    for entry in quizlets[quizlet]:
+        print("  |-> "+entry)
+        print("    |-> "+quizlets[quizlet][entry])
+print("--------------------------------------------------")
 outputFile.close()
 doc.close()

@@ -18,9 +18,9 @@ syncolor: green
 antcolor: red
 <
 Potato
-  Spud
-  Tomato
-  Fries
+  s: Spud
+  a: Tomato
+  s: Fries
   i: This is ignored
 Grape
   Rasin
